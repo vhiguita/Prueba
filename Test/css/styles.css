@@ -1,0 +1,46 @@
+﻿.btnNext{
+  margin-top: 11%;
+  margin-left:36%;
+  position: relative;
+  height:30px;
+  width:80px;
+}
+.btnResult{
+  margin-top: 11%;
+  position: relative;
+  height:30px;
+  width:130px;
+}
+#nCards {
+   margin-top: 3%;
+   position: fixed;
+   left: 14%;
+   width:100px;  
+}
+#total {
+   position: fixed;
+   left: 14%;
+   width:200px;  
+}
+#result {
+   margin-top: 1%;
+   position: fixed;
+   left: 23%;
+   width:30px;  
+}
+#operation{
+   
+   position: fixed;
+    margin-top: 1%;
+   left: 20%;
+   width:50px;  
+}
+#navDiv {
+    width:500px;
+    height:150px;
+    border:2px solid #000000;
+   
+}
+.tinCanDiv {margin-top:10px;font-size:14px;}
+
+.tc_actordiv {margin-top:10px;display:none;}

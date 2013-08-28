@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Resolver Operación</title>
+	  <style type="text/css" media="screen">
+		@import url( css/styles.css );
+	</style>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="scripts/TinCanJS/build/tincan-min.js" type="text/javascript"></script>
+    <script src="scripts/common.js" type="text/javascript"></script>
+	<script	type="text/javascript" src="jquery-1.6.4.min.js"></script>
+	<script	type="text/javascript" src="TinCanJS/build/tincan-min.js"></script>
+	<script	type="text/javascript" src="TC_operation.js"></script>
+    <script type="text/javascript">
+     $(document).ready(function () {
+	   var inicio, fin;
+       var contpuntaje=0; 
+	   var bandera=0;
+	   var banderaMaxPuntaje=0;
+	   var total=4;
+	   var i=0;
+	   var s="";
+	   $("#nCards").text('Resultantes: '+total);
+	   $("#total").text('Puntaje Total: '+contpuntaje);
+       getOperation();
+	$(".btnNext").click(function(){
+	  if(bandera==1){
+	    $("#result").remove();
+	    $( "#navDiv" ).append( "<input type='text' id='result'>" );
+	    bandera=0;
+	  }
+	    i=i+1;
+	  if(i<=5){
+	    getResult();
+	   if(i!=5){
+	     getOperation();
+		 $("#nCards").text('Resultantes: '+(total-i));
+	   }
+	   if(i==5){
+		   tc_sendStatment_EndGame(contpuntaje, s);
+		   alert("El puntaje ha sido enviado correctamente.");
+		   $(".btnNext").attr('disabled','disabled');
+	   }
+	  }
+	 });
+	 $(".btnResult").click(function(){
+	  if(bandera==0){
+       $("#result").remove();
+	   var result=0;
+	   var str=$("#operation").html();
+	   var n1 = str.charAt(0);
+	   var op = str.charAt(1);
+	   var n2 = str.charAt(2);
+	   
+	   if(op=='+'){
+	     result=parseInt(n1)+parseInt(n2);
+	   }else{
+	     result=parseInt(n1)-parseInt(n2);
+	   }
+		//$( "#navDiv" ).append( "<input type='text' id='result'>" );
+	   $( "#navDiv" ).append( "<label id='result'></label>" );
+	   $(".btnResult").attr('value', 'Volver a Operación');
+	   $("#result").text(result.toString());
+	   bandera=1; 
+	   banderaMaxPuntaje=1;
+	  }else{
+	    $("#result").remove();
+		$( "#navDiv" ).append( "<input type='text' id='result'>" );
+		$(".btnResult").attr('value', 'Ver Resultado');
+		bandera=0;
+	  }
+	 });
+	 function getResult(){
+	   fin = new Date;
+	   var segundos = (fin-inicio)/1000;
+	   segundos=Math.round(segundos);
+	   var result=0;
+	   var str=$("#operation").html();
+	   var res=$("#result").val();
+	   var n1 = str.charAt(0);
+	   var op = str.charAt(1);
+	   var n2 = str.charAt(2);
+	   s=s+" ("+str.substring(0, str.length - 1)+"); ";
+	   if(op=='+'){
+	     result=parseInt(n1)+parseInt(n2);
+	   }else{
+	     result=parseInt(n1)-parseInt(n2);
+	   }
+	   s=s+result+"; ";
+	   s=s+res+"; ";
+	   s=s+segundos.toString()+" seg; ";
+	   if(res==result){
+	    if(banderaMaxPuntaje==1){
+		 contpuntaje=contpuntaje+10;
+		 banderaMaxPuntaje=0;
+		 s=s+"10 ptos;";
+		}else{
+		 contpuntaje=contpuntaje+20;
+		 s=s+"20 ptos;";
+		}
+		 alert("Correcto");
+	   }
+	   if(res!=result&&res!=''){
+	     contpuntaje=contpuntaje+0;
+		 s=s+"0 ptos;";
+		 alert("Incorrecto");
+		 s=s+"0 ptos;";
+	   }
+	   if(res==''){
+	     contpuntaje=contpuntaje+0;
+		 s=s+"0 ptos;";
+		 alert("No se escribió la respuesta a la operación");
+	   }
+	   
+	   $("#total").text('Puntaje Total: '+contpuntaje);
+	   $("#result").val('');
+	  
+	 }
+     function getOperation(){
+	  inicio = new Date;
+	  var max=9;
+      var min=0;
+	  var a=Math.floor(Math.random()*(max-(min-1))) + min;  
+	  var b=Math.floor(Math.random()*(max-(min-1))) + min; 
+	  max=1;
+	  var i=Math.floor(Math.random()*(max-(min-1))) + min; 
+	  var op='';
+	  if(i==1){
+	     op='+';
+	  }else{
+	     op='-';
+	  }
+	  var str=a+op+b+'=';
+      str = str.replace(/\s/g,'');
+	  $("#operation").text(str);
+	}
+   });	
+   </script>
+</head>
+
+<body>
+
+
+<div id="navDiv">
+   
+    <label id="operation"></label>
+	<input type="text" id="result">
+    
+    <input type="button" value="Siguiente" class="btnNext" />
+    <input type="button" value="Ver Resultado" class="btnResult"/>
+	<p id="total"></p>
+	<p id="nCards"></p>
+</div>
+<div class="tinCanDiv">
+	<input type="checkbox" id="activateTinCan"/>
+		Post your game info to Tin Can.
+		<div id="tc_actorprompt" class="tc_actordiv">
+			<span class="warning">WARNING: Name and email will appear in the LRS viewer. Use default or made-up names & email if you don't want yours to appear.</span><br/><br/>
+			Name: <input type="text" id="tc_nameInput"/ > 
+			&nbsp;&nbsp;&nbsp;
+			Email: <input type="text" id="tc_emailInput"/ > 
+			&nbsp;
+			<button id="tc_submitActor">Submit</button>
+		</div>
+		<div id="tc_actor" class="tc_actordiv">
+			Playing as: <span id="tc_name"></span>
+			&nbsp;&nbsp;&nbsp;
+			(<span id="tc_email"></span>)  <a href="javascript:void(0)" id="tc_changeactor">change</a>
+		</div>
+</div>
+
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-26545776-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+</body>
+</html>

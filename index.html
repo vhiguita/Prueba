@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Inicio</title>
+
+		<link rel="stylesheet" href="css/base.css">
+		<link rel="stylesheet" href="css/skeleton.css">
+		<link rel="stylesheet" href="css/layout.css">
+        
+        <style type="text/css">
+
+		.tclogo {float:right;margin-left:20px;}
+		.clear {clear:both;}
+		h2 {margin:10px 0;}
+		
+        #topLinks a { font-size:0.7em; }
+        a,a:visited {color:#39648F; text-decoration:none;}
+        a:hover,a:focus {color:#754737; text-decoration:none;}
+		.prototypeDiv {margin:25px 0;}
+		
+		input[type="text"],	input[type="password"],	input[type="email"] {display:inline;}
+		
+		li {margin:0 0 2px 5px;list-style:disc inside none;}
+		
+		.configInfo {diplay:none;}
+		.configInfo .info {font-size:.9em;}
+		.configInfo .settings {margin-left:15px;}
+		.configInfo .settings span {font-weight:bold;}
+		.configInfo .settings .label {text-align:left;padding:0 10px;}
+		
+		.infoDiv {border:1px dotted;padding:5px;}
+		.rounded {-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
+		
+		.warning {font-weight:bold; color:red;}
+		
+		.cssButton {
+		background-color:#39648f;
+		-moz-border-radius:3px;
+		-webkit-border-radius:3px;
+		border-radius:3px;
+		border:1px solid #39648f;
+		display:inline-block;
+		color:#ffffff;
+		font:"HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size:16px;
+		font-weight:bold;
+		padding:6px 24px;
+		text-decoration:none;}
+		.cssButton:visited {
+		background-color:#39648f;
+		-moz-border-radius:3px;
+		-webkit-border-radius:3px;
+		border-radius:3px;
+		border:1px solid #39648f;
+		display:inline-block;
+		color:#ffffff;
+		font:"HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size:16px;
+		font-weight:bold;
+		padding:6px 24px;
+		text-decoration:none;}
+		.cssButton:hover {
+		background-color:#729fcc;
+		color:#ffffff;}
+		.cssButton:active {
+		position:relative;
+		top:1px;}
+	
+		</style>
+		
+        <script src="scripts/jquery-1.6.2.min.js"></script>
+		<script src="scripts/base64.js"></script>
+		<script src="config.js"></script>
+
+        <script type="text/javascript">
+
+        /*
+         * Make JSON safe for IE6
+         * https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/JSON#Browser_compatibility
+        */
+        if (!window.JSON) {
+            window.JSON = {
+                parse: function (sJSON) {
+                    /*jslint evil: true */
+                    return eval("(" + sJSON + ")");
+                },
+                stringify: function (vContent) {
+                    var sOutput = "",
+                        nId,
+                        sProp
+                    ;
+                    if (vContent instanceof Object) {
+                        if (vContent.constructor === Array) {
+                            for (nId = 0; nId < vContent.length; nId += 1) {
+                                sOutput += this.stringify(vContent[nId]) + ",";
+                            }
+                            return "[" + sOutput.substr(0, sOutput.length - 1) + "]";
+                        }
+                        if (vContent.toString !== Object.prototype.toString) { return "\"" + vContent.toString().replace(/"/g, "\\$&") + "\""; }
+                        for (sProp in vContent) {
+                            if (vContent.hasOwnProperty(sProp)) {
+                                sOutput += "\"" + sProp.replace(/"/g, "\\$&") + "\":" + this.stringify(vContent[sProp]) + ",";
+                            }
+                        }
+                        return "{" + sOutput.substr(0, sOutput.length - 1) + "}";
+                    }
+                    return typeof vContent === "string" ? "\"" + vContent.replace(/"/g, "\\$&") + "\"" : String(vContent);
+                }
+            };
+        }
+
+		$(document).ready(function(){
+			
+            var PROTOTYPE_SHOW_CONFIG_INFO = true;
+            var PROTOTYPE_DEFAULT_NAME = Config.actor.name[0];
+            var PROTOTYPE_DEFAULT_MBOX = Config.actor.mbox[0];
+            var PROTOTYPE_ENDPOINT = Config.endpoint;
+            var PROTOTYPE_AUTH = 'Basic ' + Base64.encode(Config.authUser + ':' + Config.authPassword);
+
+			$('#tc_nameInput_golf').val(PROTOTYPE_DEFAULT_NAME);
+			$('#tc_emailInput_golf').val(PROTOTYPE_DEFAULT_MBOX.replace('mailto:',''));
+			$('#tc_nameInput_loc').val(PROTOTYPE_DEFAULT_NAME);
+			$('#tc_emailInput_loc').val(PROTOTYPE_DEFAULT_MBOX.replace('mailto:',''));
+			
+			
+			$('#golfExampleLaunch').click(function(){
+				var em = $("#tc_emailInput_golf").val();
+				var mbox = (em.indexOf('mailto:') == 0) ? em : 'mailto:' + em;
+				var nm = $("#tc_nameInput_golf").val();
+				var actor = {'mbox' : [mbox], 'name' : [nm]};
+				
+				
+				$(this).attr('href',$(this).attr('baseref') 
+					+ "endpoint=" + encodeURIComponent(PROTOTYPE_ENDPOINT)
+					+ "&auth=" + encodeURIComponent(PROTOTYPE_AUTH)
+					+ "&actor=" +encodeURIComponent(JSON.stringify(actor)));
+				return true;
+			});
+
+			$('#jsExampleLaunch').click(function(){
+				var actor = Config.actor;
+                var em = actor.mbox[0];
+                var mbox = (em.indexOf('mailto:') == 0) ? em : 'mailto:' + em;
+                actor.mbox = [mbox];
+				
+				$(this).attr('href',$(this).attr('baseref') 
+					+ "endpoint=" + encodeURIComponent(PROTOTYPE_ENDPOINT)
+					+ "&auth=" + encodeURIComponent(PROTOTYPE_AUTH)
+					+ "&actor=" +encodeURIComponent(JSON.stringify(actor)));
+				return true;
+			});
+			$('#operationExampleLaunch').click(function(){
+				var actor = Config.actor;
+                var em = actor.mbox[0];
+                var mbox = (em.indexOf('mailto:') == 0) ? em : 'mailto:' + em;
+                actor.mbox = [mbox];
+				
+				$(this).attr('href',$(this).attr('baseref') 
+					+ "endpoint=" + encodeURIComponent(PROTOTYPE_ENDPOINT)
+					+ "&auth=" + encodeURIComponent(PROTOTYPE_AUTH)
+					+ "&actor=" +encodeURIComponent(JSON.stringify(actor)));
+				return true;
+			});
+			
+			
+			
+			$('#locatorExampleLaunch').click(function(){
+				var em = $("#tc_emailInput_loc").val();
+				var nm = $("#tc_nameInput_loc").val();
+				var mbox = (em.indexOf('mailto:') == 0) ? em : 'mailto:' + em;
+				var actor = {'mbox' : [mbox], 'name' : [nm]};
+				
+				$(this).attr('href',$(this).attr('baseref') 
+					+ "endpoint=" + encodeURIComponent(PROTOTYPE_ENDPOINT)
+					+ "&auth=" + encodeURIComponent(PROTOTYPE_AUTH)
+					+ "&actor=" +encodeURIComponent(JSON.stringify(actor)));
+				return true;
+			});
+			
+			if (PROTOTYPE_SHOW_CONFIG_INFO){
+				$('.configInfo').show();
+				$('#defEndpoint').text(PROTOTYPE_ENDPOINT);
+				$('#defAuth').text(PROTOTYPE_AUTH);
+				$('#defActorName').text(PROTOTYPE_DEFAULT_NAME);
+				$('#defActorMbox').text(PROTOTYPE_DEFAULT_MBOX);
+			}
+			
+		});
+
+        
+        
+        </script>
+        
+    </head>
+    
+    
+    <body>
+    		
+			<div class="container">
+				
+				<!--<div class="warning">NOTE: These prototypes don't currently work in MS Internet Explorer, due to the way we're handling cross-domain and authentication. Please see Ben's recent coment on the <a href="http://scorm.com/project-tin-can-phase-3-distribution-of-contentcross-domain/">cross domain</a> page. Except for the LRS viewer, please use a browser other than IE to try these prototypes.</div><br/>	-->
+				</div>
+				
+				<br class='clear'/>
+				<div class="configInfo infoDiv rounded ">
+					<h4>Prototype Configuration Settings</h4>
+					<div class='info'>The default prototype settings are as follows.  To change these settings,
+						 you must change the values in the config.js
+						 file at the top level of this Tin Can Prototypes folder.
+						<br/>
+					</div>
+					<table class='settings'>
+						<tr><td class='label'>endpoint: <td/><td><span id="defEndpoint"></span></td></tr>
+						<tr><td  class='label'>auth: <td/><td><span id="defAuth"></span></td></tr>
+						<tr><td class='label'>Default actor name: <td/><td><span id="defActorName"></span></td></tr>
+						<tr><td class='label'>Default actor mbox: <td/><td><span id="defActorMbox"></span></td></tr>
+					</table>
+				</div>
+
+	
+				<div class='prototypeDiv'>
+
+				<h2>Ejemplo de Operaciones</h2>
+				<a id="operationExampleLaunch" href="" target="_blank" baseref="Test/index.html?" class="cssButton">Ejecutar</a>
+				</div>
+
+
+			</div>
+    </body>
+</html>
